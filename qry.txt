@@ -1,0 +1,61 @@
+1. Create
+
+    1.1 User Registration
+
+    1.2 Membangun Bangunan
+
+2. Read
+    2.1. Menampilkan detail Bangunan yang dimilikki oleh user dalam server 
+        SQL Nama:
+        SELECT 
+            usr.username, 
+            array_to_string(array_agg(bd.building_name), ', ') buildings_name,
+            array_to_string(array_agg(built.level), ', ') buildings_level, 
+            array_to_string(array_agg(chr.health_point), ', ') buildings_health_point, 
+            array_to_string(array_agg(chr.attack_rate), ', ') buildings_attack_rate, 
+            array_to_string(array_agg(chr.damage), ', ') buildings_damage
+        FROM 
+            "user" usr
+        INNER JOIN location loc ON loc.user_id=usr.id
+        INNER JOIN building_built built ON loc.id=built.location_id
+        INNER JOIN building bd ON bd.id=built.building_id
+        INNER JOIN characteristic chr ON bd.characteristic_id=chr.id
+        GROUP BY 
+            usr.username;
+
+    2.2. Menampilkan Pasukkan Yang dimilikki user
+
+        SQL:
+        SELECT 
+            usr.username, 
+            array_to_string(array_agg(u.unit_name), ', ') units_name,
+            array_to_string(array_agg(ul.level), ', ') units_level, 
+            array_to_string(array_agg(chr.health_point), ', ') units_health, 
+            array_to_string(array_agg(chr.attack_rate), ', ') units_attack_rate, 
+            array_to_string(array_agg(chr.damage), ', ') units_damage
+        FROM 
+            "user" usr
+            INNER JOIN location loc ON loc.user_id=usr.id
+            INNER JOIN units_on_location ul ON loc.id=ul.location_id
+            INNER JOIN unit u ON u.id=ul.unit_id
+            INNER JOIN characteristic chr ON u.characteristic_id=chr.id
+        WHERE
+            usr.username = 'testUser2'
+        GROUP BY 
+            usr.username;
+
+    2.2. Menampilkan Resource Yang dimilikki user
+
+        SQL: 
+        SELECT 
+            usr.username,
+            array_to_string(array_agg(res.resource_name), ', ') resource_name,
+            array_to_string(array_agg(resl.number), ', ') resource_amount
+        FROM 
+            "user" usr
+            INNER JOIN location loc ON loc.user_id=usr.id
+            INNER JOIN resource_on_location resl ON loc.id=resl.location_id
+            INNER JOIN resource res ON res.id=resl.resource_id
+        GROUP BY 
+            usr.username;
+
